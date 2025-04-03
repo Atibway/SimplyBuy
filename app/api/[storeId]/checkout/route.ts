@@ -1,11 +1,10 @@
-import {db as prismadb} from "@/lib/prismadb";
+import { db as prismadb } from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import stripe from "@/lib/stripe";
 
-
 // CORS headers
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*", // Change "*" to specific origin if needed for security, like "http://localhost:3001"
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
@@ -18,41 +17,63 @@ export async function OPTIONS() {
 // Handle POST request
 export async function POST(req: Request, { params }: { params: { storeId: string } }) {
   try {
-    const { productIds, userId } = await req.json();
+    const { items, userId } = await req.json(); // Expecting 'items' array with id and countInStock
 
-    if (!productIds || !userId || productIds.length === 0) {
-      return new NextResponse("Product ids are required", {
+
+    if (!items || !userId || items.length === 0) {
+      return new NextResponse("Items and userId are required", {
         status: 400,
         headers: corsHeaders,
       });
     }
 
+    const productIds = items.map((item: { id: string }) => item.id);
+
+    // Fetch product details from the database
     const products = await prismadb.product.findMany({
       where: { id: { in: productIds } },
     });
+console.log(products);
 
-    const line_items = products.map((product) => ({
-      quantity: 1,
-      price_data: {
-        currency: "USD",
-        product_data: { name: product.name },
-        unit_amount: product.price.toNumber() * 100,
-      },
-    }));
+    // Prepare line items for Stripe checkout
+    const line_items = products.map((product) => {
+      const cartItem = items.find((item: { id: string }) => item.id === product.id);
+      const quantity = cartItem?.countInStock || 1; // Default to 1 if not provided
 
+      return {
+        quantity,
+        price_data: {
+          currency: "USD",
+          product_data: { name: product.name },
+          unit_amount: product.price.toNumber() * 100, 
+        },
+      };
+    });
+
+    // Create an order in the database
     const order = await prismadb.order.create({
       data: {
         storeId: params.storeId,
         isPaid: false,
         userId,
         orderItems: {
-          create: productIds.map((id:string) => ({
-            product: { connect: { id } },
+          create: items.map((item: { id: string; countInStock: number; name: string; price: number; priceDiscount: number; rating?: number }) => ({
+            product: { connect: { id: item.id } },
+            quantity: item.countInStock,
+            name: item.name,
+            price: item.price,
+            priceDiscount: item.priceDiscount,
+            rating: item.rating ?? 0, // Default to 0 if not provided
           })),
         },
       },
     });
+    
 
+ 
+    
+
+    // Create a Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       line_items,
       mode: "payment",
@@ -69,4 +90,3 @@ export async function POST(req: Request, { params }: { params: { storeId: string
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
-
