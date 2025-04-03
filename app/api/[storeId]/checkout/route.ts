@@ -58,8 +58,8 @@ export async function POST(req: Request, { params }: { params: { storeId: string
       mode: "payment",
       billing_address_collection: "required",
       phone_number_collection: { enabled: true },
-      success_url: `https://atidu-stores.vercel.app/frontend/cart?success=1`,
-      cancel_url: `https://atidu-stores.vercel.app/frontend/cart?canceled=1`,
+      success_url: `https://simplybuy-dusky.vercel.app/frontend/cart?success=1`,
+      cancel_url: `https://simplybuy-dusky.vercel.app/frontend/cart?canceled=1`,
       metadata: { orderId: order.id },
     });
 
