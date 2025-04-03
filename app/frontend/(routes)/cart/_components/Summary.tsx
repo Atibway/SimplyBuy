@@ -36,7 +36,7 @@ const router = useRouter()
 router.push("/auth/login")
 
     }else{
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/checkout`, {
+      const response = await axios.post(`https://simplybuy-dusky.vercel.app/api/checkout`, {
         productIds: items.map((item) => item.id),
         userId: user.id
       })
