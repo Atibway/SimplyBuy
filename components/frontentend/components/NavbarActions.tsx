@@ -34,7 +34,7 @@ const NavbarActions = ({
     
 
   return (
-    <div className='ml-auto flex items-center '>
+    <div className='ml-auto  items-center hidden lg:flex '>
         {user?.role === "ADMIN" && (
             <Link
             href={`/`}

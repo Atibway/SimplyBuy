@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { Category } from "@/types"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import Menu from "./mobileMenue"
+
 
 interface MainNavProps {
     data:  Category[]
@@ -42,11 +42,7 @@ const MainNav: React.FC<MainNavProps> = ({
         </Link>
       ))}
       </div>
-      <div>
-        <Menu
-        categories={data}
-        />
-      </div>
+     
     </div>
   )
 }
