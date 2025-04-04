@@ -34,10 +34,11 @@ const NavbarActions = ({
     
 
   return (
-    <div className='ml-auto  items-center hidden lg:flex '>
+    <div className='ml-auto flex items-center  '>
         {user?.role === "ADMIN" && (
             <Link
             href={`/`}
+            className='hidden md:block'
             >
             <Button 
             >
