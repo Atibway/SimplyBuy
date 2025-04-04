@@ -33,7 +33,7 @@ export const NavBar = async () => {
         {/* Logo */}
         <Link href="/frontend" className="flex items-center ml-3">
           <Image src="/logo.svg" alt="logo" width={40} height={40} className="object-cover" />
-          <p className="font-bold text-xl ">simplybuy</p>
+          <p className="font-bold text-xl hidden md:block">simplybuy</p>
         </Link>
 
         {/* Main Navigation (Visible on Larger Screens) */}
