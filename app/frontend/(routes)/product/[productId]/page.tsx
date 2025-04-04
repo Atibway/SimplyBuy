@@ -4,8 +4,24 @@ import Gallery from '@/components/frontentend/components/Gallery';
 import Info from '@/components/frontentend/components/Info';
 import ProductList from '@/components/frontentend/components/ProductList';
 import { Container } from '@/components/frontentend/components/ui/Container';
+import { db } from '@/lib/prismadb';
 
-
+export async function generateMetadata({
+  params,
+}:{
+  params: {productId: string;}
+}) {
+  
+      const product = await db.product.findUnique({
+          where:{
+              id: params.productId
+          }
+      })
+  
+return {
+  title: product?.name || "product"
+};
+}
 
 interface ProductPageProps {
     params: {

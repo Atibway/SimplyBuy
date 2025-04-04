@@ -10,7 +10,25 @@ import NoResults from "@/components/frontentend/components/ui/NoResults";
 import ProductCard from "@/components/frontentend/components/ui/ProductCard";
 import MobileFilter from "./components/MobileFilter";
 import { Container } from "@/components/frontentend/components/ui/Container";
+import { db } from "@/lib/prismadb";
 export const revalidate = 0;
+
+export async function generateMetadata({
+  params,
+}:{
+  params: {categoryId: string;}
+}) {
+  
+      const category = await db.category.findUnique({
+          where:{
+              id: params.categoryId
+          }
+      })
+  
+return {
+  title: category?.name || "category"
+};
+}
 
 interface CategoryPageProps {
     params: {
