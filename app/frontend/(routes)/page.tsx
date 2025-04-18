@@ -8,7 +8,7 @@ import { Container } from "@/components/frontentend/components/ui/Container";
 export const revalidate = 0
 
 export default async function HomePage() {
-  const billboard = await getBillboard("1153fde6-fe22-42b2-b29c-c821d80a9931")
+  const billboard = await getBillboard("e0000cb5-3d68-49a5-a328-1c0f4ed167db")
   const products = await getProducts({isFeatured: true})
   
   return (
